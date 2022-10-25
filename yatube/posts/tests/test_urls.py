@@ -61,7 +61,7 @@ class PostURLTest(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK.value)
 
     def test_url_post_edit(self):
-        """Страница /posts/post_id/edit --(редактирования поста) 
+        """Страница /posts/post_id/edit --(редактирования поста)
         доступна только автору поста."""
         if self.user.username == self.post.author:
             response = self.authorized_client.\

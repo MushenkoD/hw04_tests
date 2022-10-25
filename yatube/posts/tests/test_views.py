@@ -128,7 +128,7 @@ class PostPagesTests(TestCase):
             self.assertEqual(len(response.context['page_obj']), count_posts)
 
     def test_third_page_contains_six_posts(self):
-        """Проверка: количество постов на 3 странице равно 6. 
+        """Проверка: количество постов на 3 странице равно 6.
         count количество постов созданых в цикле
          + 1 пост в не цикла count+1//10 = 6"""
         namespace_list = {
