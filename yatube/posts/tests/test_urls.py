@@ -55,7 +55,7 @@ class PostURLTest(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND.value)
 
     def test_url_post_create(self):
-        """Страница /create/--(создания поста) доступна 
+        """Страница /create/--(создания поста) доступна
         только авторизованному пользователю."""
         response = self.authorized_client.get(reverse('posts:post_create'))
         self.assertEqual(response.status_code, HTTPStatus.OK.value)

@@ -13,7 +13,7 @@ User = get_user_model()
 class PostPagesTests(TestCase):
     @classmethod
     def setUpClass(cls):
-        """ Создаем тестовую группу и тестовыый экземпляр поста 
+        """ Создаем тестовую группу и тестовыый экземпляр поста
         и 25 тестовых постов для теста пагинатора."""
         super().setUpClass()
         cls.user = User.objects.create_user(username='test_test')
@@ -45,18 +45,21 @@ class PostPagesTests(TestCase):
     def test_pages_use_correct_template(self):
         """URL-адрес использует соответствующий шаблон"""
         templates_page_names = {
-            'posts/group_list.html': reverse('posts:group_posts', kwargs={'slug': self.group.slug}),
-            'posts/index.html': reverse('posts:index'),
-            'posts/profile.html': reverse('posts:profile', kwargs={'username': (
-                self.user.username)}),
-            'posts/create_post.html': reverse('posts:post_create'),
-            'posts/create_post.html': reverse('posts:post_edit', kwargs={'post_id': (
-                self.post.pk)}),
+            reverse('posts:group_posts', kwargs={'slug': self.group.slug}): (
+                'posts/group_list.html'
+            ),
+            reverse('posts:index'): 'posts/index.html',
+            reverse('posts:profile', kwargs={'username': (
+                self.user.username)}): 'posts/profile.html',
+            reverse('posts:post_create'): 'posts/create_post.html',
+            reverse('posts:post_edit', kwargs={'post_id': (
+                self.post.pk)}): 'posts/create_post.html',
         }
-        for template, reverse_name in templates_page_names.items():
-            with self.subTest(template=template):
+        for reverse_name, template in templates_page_names.items():
+            with self.subTest(reverse_name=reverse_name):
                 response = self.authorized_client.get(reverse_name)
                 self.assertTemplateUsed(response, template)
+                
 
     def test_posts_get_correct_context(self):
         """Шаблоны posts сформированы с верным контекстом."""
@@ -124,7 +127,7 @@ class PostPagesTests(TestCase):
         for template, reverse_name in namespace_list.items():
             response = self.guest_client.get(reverse_name)
             self.assertEqual(len(response.context['page_obj']), count_posts)
-
+            
     def test_third_page_contains_six_posts(self):
         """Проверка: количество постов на 3 странице равно 6. 
         count количество постов созданых в цикле
