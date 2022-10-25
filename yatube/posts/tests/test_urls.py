@@ -18,11 +18,11 @@ class PostURLTest(TestCase):
         super().setUpClass()
         cls.user = User.objects.create_user(username='test_test')
         cls.group = Group.objects.create(
-            title = 'test_group title',
-            slug = 'test_group_slug',
-            description = 'test_group description',
+            title='test_group title',
+            slug='test_group_slug',
+            description='test_group description',
         )
-        
+
         cls.post = Post.objects.create(
             author=cls.user,
             text='Test text test text',
@@ -38,7 +38,6 @@ class PostURLTest(TestCase):
         self.author_client = Client()
         self.author_client.force_login(self.user)
 
-  
     def test_list_url_exists_at_desired_location(self):
         """Страница /--(главная) доступна любому пользователю."""
         urls = (reverse('posts:index'),
@@ -65,7 +64,7 @@ class PostURLTest(TestCase):
         """Страница /posts/post_id/edit --(редактирования поста) 
         доступна только автору поста."""
         if self.user.username == self.post.author:
-            response = self.authorized_client. \
+            response = self.authorized_client.\
                 get(reverse('posts:post_edit',
                             kwargs={'post_id': f'{self.post.id}'}))
             self.assertEqual(response.status_code, HTTPStatus.OK.value)
@@ -109,4 +108,3 @@ class PostURLTest(TestCase):
             with self.subTest(address=address):
                 response = self.author_client.get(address)
                 self.assertTemplateUsed(response, template)
-

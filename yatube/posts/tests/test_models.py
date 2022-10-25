@@ -20,11 +20,10 @@ class TaskModelTest(TestCase):
             text='Test text test text'
         )
 
-    
         cls.group = Group.objects.create(
-            title = 'test_group title',
-            slug = 'test_group_slug',
-            description = 'test_group description',
+            title='test_group title',
+            slug='test_group_slug',
+            description='test_group description',
         )
 
     def test_object_post_text(self):
@@ -38,5 +37,3 @@ class TaskModelTest(TestCase):
         group = TaskModelTest.group
         expected_object_name = group.title
         self.assertEqual(expected_object_name, str(group))
-
-    

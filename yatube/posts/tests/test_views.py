@@ -18,9 +18,9 @@ class PostPagesTests(TestCase):
         super().setUpClass()
         cls.user = User.objects.create_user(username='test_test')
         cls.group = Group.objects.create(
-            title = 'test_group title',
-            slug = 'test_group_slug',
-            description = 'test_group description',
+            title='test_group title',
+            slug='test_group_slug',
+            description='test_group description',
         )
         cls.post = Post.objects.create(
             text='Test text test text',
@@ -33,7 +33,7 @@ class PostPagesTests(TestCase):
                 text='Test text test text',
                 author=cls.user,
                 group=cls.group,
-        )
+            )
 
     def setUp(self):
         """Создаем неавторизованный клиент, cоздаем авторизованный клиент
@@ -42,24 +42,21 @@ class PostPagesTests(TestCase):
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
-
-    
     def test_pages_use_correct_template(self):
         """URL-адрес использует соответствующий шаблон"""
         templates_page_names = {
-            'posts/group_list.html' :reverse('posts:group_posts', kwargs={'slug': self.group.slug}) ,
-            'posts/index.html': reverse('posts:index') ,
+            'posts/group_list.html': reverse('posts:group_posts', kwargs={'slug': self.group.slug}),
+            'posts/index.html': reverse('posts:index'),
             'posts/profile.html': reverse('posts:profile', kwargs={'username': (
-                self.user.username)}), 
+                self.user.username)}),
             'posts/create_post.html': reverse('posts:post_create'),
-            'posts/create_post.html' :reverse('posts:post_edit', kwargs={'post_id': (
+            'posts/create_post.html': reverse('posts:post_edit', kwargs={'post_id': (
                 self.post.pk)}),
         }
-        for template , reverse_name  in templates_page_names.items():
+        for template, reverse_name in templates_page_names.items():
             with self.subTest(template=template):
                 response = self.authorized_client.get(reverse_name)
                 self.assertTemplateUsed(response, template)
-    
 
     def test_posts_get_correct_context(self):
         """Шаблоны posts сформированы с верным контекстом."""
@@ -89,7 +86,6 @@ class PostPagesTests(TestCase):
                         test_post_param=test_post_param):
                     self.assertEqual(post_param, test_post_param)
 
-
     def test_create_post_show_correct_context(self):
         """Шаблоны create и edit сформированы с верным контекстом."""
         namespace_list = [
@@ -115,15 +111,14 @@ class PostPagesTests(TestCase):
         post_text = first_object.text
         self.assertTrue(post_text, 'Test text test text')
 
-
     def test_first_page_ten_posts(self):
         """Проверка: количество постов на первой странице равно 10."""
         namespace_list = {
             'posts:index': reverse('posts:index'),
             'posts:group_posts': reverse(
-            'posts:group_posts', kwargs={'slug': self.group.slug}),
+                'posts:group_posts', kwargs={'slug': self.group.slug}),
             'posts:profile': reverse(
-            'posts:profile', kwargs={'username': self.user.username}),
+                'posts:profile', kwargs={'username': self.user.username}),
         }
         count_posts = 10
         for template, reverse_name in namespace_list.items():
@@ -147,4 +142,3 @@ class PostPagesTests(TestCase):
         for template, reverse_name in namespace_list.items():
             response = self.guest_client.get(reverse_name)
             self.assertEqual(len(response.context['page_obj']), count_posts)
-

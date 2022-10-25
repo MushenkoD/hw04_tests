@@ -79,7 +79,7 @@ class PostFormsTests(TestCase):
         """Авторизованный клиент может редактировать посты."""
         post_count = Post.objects.count()
         form_data = {
-            'text': 'Измененный текст',            
+            'text': 'Измененный текст',
         }
         response = self.authorized_client.post(
             reverse('posts:post_edit', kwargs={'post_id': self.post.pk}),
