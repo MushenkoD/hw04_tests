@@ -59,7 +59,6 @@ class PostPagesTests(TestCase):
             with self.subTest(reverse_name=reverse_name):
                 response = self.authorized_client.get(reverse_name)
                 self.assertTemplateUsed(response, template)
-                
 
     def test_posts_get_correct_context(self):
         """Шаблоны posts сформированы с верным контекстом."""
@@ -127,7 +126,7 @@ class PostPagesTests(TestCase):
         for template, reverse_name in namespace_list.items():
             response = self.guest_client.get(reverse_name)
             self.assertEqual(len(response.context['page_obj']), count_posts)
-            
+
     def test_third_page_contains_six_posts(self):
         """Проверка: количество постов на 3 странице равно 6. 
         count количество постов созданых в цикле
