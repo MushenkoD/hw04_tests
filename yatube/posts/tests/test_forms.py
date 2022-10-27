@@ -1,6 +1,3 @@
-import shutil
-import tempfile
-
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
@@ -12,8 +9,6 @@ from posts.forms import PostForm
 
 User = get_user_model()
 
-TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
-
 
 class PostFormsTests(TestCase):
     @classmethod
@@ -22,7 +17,7 @@ class PostFormsTests(TestCase):
         super().setUpClass()
         cls.user = User.objects.create_user(username='test_test')
         cls.group = Group.objects.create(
-            title="Тестовая заголовок",
+            title='Тестовая заголовок',
             slug='test-slug',
             description='Тестовое описание',
         )
@@ -39,13 +34,8 @@ class PostFormsTests(TestCase):
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
-    @classmethod
-    def tearDownClass(cls):
-        super().tearDownClass()
-        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
-
     def test_authorized_client_post_create(self):
-        """"Создается новая запись в базе данных"""
+        """Авторизированный клиент может создавать посты."""
         posts_count = Post.objects.count()
         form_data = {
             'text': 'Данные из формы',
@@ -60,9 +50,13 @@ class PostFormsTests(TestCase):
         self.assertRedirects(response, reverse(
             'posts:profile',
             kwargs={'username': self.user.username}))
+        self.assertTrue(
+            Post.objects.filter(text='Данные из формы').exists()
+        )
 
     def test_guest_client_post_create(self):
         """Неавторизованный клиент не может создавать посты."""
+        posts_count = Post.objects.count()
         form_data = {
             'text': 'Пост от неавторизованного клиента',
             'group': self.group.id
@@ -74,9 +68,10 @@ class PostFormsTests(TestCase):
         )
         self.assertFalse(Post.objects.filter(
             text='Пост от неавторизованного клиента').exists())
+        self.assertEqual(Post.objects.count(), posts_count)
 
     def test_authorized_post_edit(self):
-        """Авторизованный клиент может редактировать посты."""
+        """Автор может редактировать посты не автор будет перенаправлен."""
         post_count = Post.objects.count()
         form_data = {
             'text': 'Измененный текст',
@@ -89,3 +84,6 @@ class PostFormsTests(TestCase):
         self.assertEqual(Post.objects.count(), post_count)
         self.assertRedirects(response, reverse(
             'posts:post_detail', kwargs={'post_id': self.post.pk}))
+        self.assertTrue(
+            Post.objects.filter(text='Измененный текст',).exists()
+        )
