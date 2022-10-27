@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from itertools import count
 
 from django import forms
 from django.urls import reverse
