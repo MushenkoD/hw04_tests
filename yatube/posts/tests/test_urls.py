@@ -68,19 +68,20 @@ class PostURLTest(TestCase):
         """Страница /posts/post_id/edit --(редактирования поста)
         доступна автору поста."""
         self.user2.username = self.post.author
-        response = self.author_client.get(reverse('posts:post_edit',
-                                           kwargs={'post_id':
-                                           f'{self.post.id}'}))
+        response = self.author_client.get(
+                reverse('posts:post_edit',
+                kwargs={'post_id': f'{self.post.id}'})
+        )
         self.assertEqual(response.status_code, HTTPStatus.OK.value)
 
     def test_url_post_edit1(self):
         """Страница /posts/post_id/edit --(редактирования поста)
         не доступна не автору поста."""
         self.user2.username = self.post.author
-        response = self.authorized_client.get(reverse(
-                                             'posts:post_edit',
-                                              kwargs={'post_id':
-                                              f'{self.post.id}'}))
+        response = self.authorized_client.get(
+                reverse('posts:post_edit',
+                kwargs={'post_id': f'{self.post.id}'})
+        )
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, f'/posts/{self.post.id}/')
 
@@ -88,8 +89,11 @@ class PostURLTest(TestCase):
         """Адрес /posts/post_id/edit --(редактирования поста)
         перенаправит анонимного пользователя
         на страницу авторизации."""
-        response = self.client.get(reverse('posts:post_edit',
-                                    kwargs={'post_id': f'{self.post.id}'}), follow=True)
+        response = self.client.get(
+                reverse('posts:post_edit',
+                kwargs={'post_id': f'{self.post.id}'}),
+                follow=True
+        )
         self.assertRedirects(response,
                              f'/auth/login/?next=/posts/{self.post.id}/edit/')
 
