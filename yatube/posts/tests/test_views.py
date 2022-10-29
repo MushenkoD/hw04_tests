@@ -61,7 +61,7 @@ class PostPagesTests(TestCase):
                 self.post.pk)}): 'posts/create_post.html',
         }
         self.views_dict = {
-            'group_posts': reverse('posts:group_posts', 
+            'group_posts': reverse('posts:group_posts',
                                    kwargs={'slug': self.group.slug}
                                    ),
             'index': reverse('posts:index'),
@@ -82,7 +82,7 @@ class PostPagesTests(TestCase):
                 response = self.authorized_client.get(reverse_name)
                 self.assertTemplateUsed(response, template)
                 self.assertEqual(response.status_code, HTTPStatus.OK.value)
-    
+
     def test_posts_index_get_correct_context(self):
         """Шаблоны index сформированы с верным контекстом."""
         page_obj = page_obj_func(Post.objects.all(), 1)
@@ -98,10 +98,10 @@ class PostPagesTests(TestCase):
         self.assertEqual(text, post_text)
         self.assertEqual(author, post_author)
         self.assertEqual(str(response.context['page_obj']), str(page_obj))
-       
+
     def test_posts_group_posts_get_correct_context(self):
         """Шаблон group_posts сформированы с верным контекстом."""
-        
+
         post_group = self.group
         post_text = self.post.text
         page_obj = page_obj_func(post_group.posts.all(), 1)
@@ -135,7 +135,7 @@ class PostPagesTests(TestCase):
         self.assertEqual(count_posts, count)
         self.assertEqual(post_author, author)
         self.assertEqual(str(response.context['page_obj']), str(page_obj))
-        
+
     def test_posts_post_detail_get_correct_context(self):
         """Шаблон post_detail сформированы с верным контекстом."""
         post_text = self.post.text
@@ -167,7 +167,7 @@ class PostPagesTests(TestCase):
             with self.subTest(value=value):
                 form_field = response.context['form'].fields[value]
                 self.assertIsInstance(form_field, expected)
-             
+
     def test_edit_post_show_correct_context(self):
         """Шаблон edit с верным контекстом."""
         view = self.views_dict['edit']
@@ -185,7 +185,7 @@ class PostPagesTests(TestCase):
                 form_field = response.context['form'].fields[value]
                 self.assertIsInstance(form_field, expected)
         self.assertEqual(post_id, postid)
-    
+
     def test_post_in_this_group(self):
         """Проверка: пост  группу."""
         group = self.group

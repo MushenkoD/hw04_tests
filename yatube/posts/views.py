@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import PostForm
 from .models import Group, Post
-
+from .utils import post_paginator
 
 User = get_user_model()
 

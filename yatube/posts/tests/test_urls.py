@@ -54,7 +54,6 @@ class PostURLTest(TestCase):
             'edit': f'/posts/{self.post.id}/edit/',
         }
         self.open_urls = {k: self.urls[k] for k in list(self.urls.keys())[:4]}
-        
 
     def test_url_not_exist(self):
         """Страница не существующая не существует."""
