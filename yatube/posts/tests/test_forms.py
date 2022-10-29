@@ -78,7 +78,6 @@ class PostFormsTests(TestCase):
         post_count = Post.objects.count()
         form_data = {
             'text': 'Измененный текст',
-            'group': self.group.id
         }
 
         response = self.authorized_client.post(
@@ -92,4 +91,4 @@ class PostFormsTests(TestCase):
             'posts:post_detail', kwargs={'post_id': self.post.pk}))
         self.assertTrue(
             Post.objects.filter(text='Измененный текст', author=self.user,
-                                group=self.group).exists())
+                                ).exists())
