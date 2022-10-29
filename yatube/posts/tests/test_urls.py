@@ -2,7 +2,6 @@ from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
-from django.urls import reverse
 
 from posts.models import Group, Post
 
@@ -44,7 +43,7 @@ class PostURLTest(TestCase):
             f'/profile/{self.not_author.username}/': 'posts/profile.html',
             f'/posts/{self.post.id}/': 'posts/post_detail.html',
             '/create/': 'posts/create_post.html',
-            f'/posts/{self.post.id}/edit/' : 'posts/create_post.html',
+            f'/posts/{self.post.id}/edit/': 'posts/create_post.html',
         }
         self.urls = {
             'index': '/',
@@ -60,7 +59,6 @@ class PostURLTest(TestCase):
     def test_url_not_exist(self):
         """Страница не существующая не существует."""
         response = self.guest_client.get('/qwerty12345/')
-
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND.value)
 
     def test_list_url_exists_at_desired_location(self):
@@ -108,7 +106,7 @@ class PostURLTest(TestCase):
         перенаправит анонимного пользователя
         на страницу авторизации."""
         response = self.client.get(self.urls['edit'])
-        
+
         self.assertRedirects(response,
                              f'/auth/login/?next=/posts/{self.post.id}/edit/')
 

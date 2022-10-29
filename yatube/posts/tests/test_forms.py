@@ -1,4 +1,3 @@
-from tokenize import group
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -53,8 +52,8 @@ class PostFormsTests(TestCase):
             'posts:profile',
             kwargs={'username': self.user.username}))
         self.assertTrue(
-            Post.objects.filter(text='Данные из формы', author = self.user, group = self.group).exists()
-        )
+            Post.objects.filter(text='Данные из формы', author=self.user,
+                                group=self.group).exists())
 
     def test_guest_client_can_not_post_create(self):
         """Неавторизованный клиент не может создавать посты."""
@@ -87,10 +86,10 @@ class PostFormsTests(TestCase):
             data=form_data,
             follow=True
         )
-        
+
         self.assertEqual(Post.objects.count(), post_count)
         self.assertRedirects(response, reverse(
             'posts:post_detail', kwargs={'post_id': self.post.pk}))
         self.assertTrue(
-            Post.objects.filter(text='Измененный текст', author = self.user, group = self.group ).exists()
-        )
+            Post.objects.filter(text='Измененный текст', author=self.user,
+                                group=self.group).exists())

@@ -1,10 +1,8 @@
 from http import HTTPStatus
-from types import MethodType
 
 from django import forms
 from django.urls import reverse
 from django.test import TestCase, Client
-from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
@@ -43,8 +41,7 @@ class PostPagesTests(TestCase):
             cls.post = Post.objects.create(
                 text='Test text test text',
                 author=cls.post_author,
-                group=cls.group,
-        )
+                group=cls.group,)
 
     def setUp(self):
         """Создаем неавторизованный клиент, cоздаем авторизованный клиент
@@ -64,8 +61,9 @@ class PostPagesTests(TestCase):
                 self.post.pk)}): 'posts/create_post.html',
         }
         self.views_dict = {
-            'group_posts': reverse('posts:group_posts', kwargs={'slug': self.group.slug})
-            ,
+            'group_posts': reverse('posts:group_posts', 
+                                   kwargs={'slug': self.group.slug}
+                                   ),
             'index': reverse('posts:index'),
             'profile': reverse('posts:profile', kwargs={'username': (
                 self.post_author.username)}),
@@ -84,8 +82,7 @@ class PostPagesTests(TestCase):
                 response = self.authorized_client.get(reverse_name)
                 self.assertTemplateUsed(response, template)
                 self.assertEqual(response.status_code, HTTPStatus.OK.value)
-     
-
+    
     def test_posts_index_get_correct_context(self):
         """Шаблоны index сформированы с верным контекстом."""
         page_obj = page_obj_func(Post.objects.all(), 1)
@@ -233,15 +230,17 @@ class PostPagesTests(TestCase):
         """Проверка: количество постов на первой странице равно 10."""
         namespace_list = {
             'posts:index': reverse('posts:index'),
-            'posts:group_posts': reverse(
-                'posts:group_posts', kwargs={'slug': self.group.slug}),
-            'posts:profile': reverse(
-                'posts:profile', kwargs={'username': self.post_author.username}),
+            'posts:group_posts': reverse('posts:group_posts',
+                                         kwargs={'slug': self.group.slug}),
+            'posts:profile': reverse('posts:profile',
+                                     kwargs={'username':
+                                             self.post_author.username}),
         }
-        
+
         for template, reverse_name in namespace_list.items():
             response = self.guest_client.get(reverse_name)
-            self.assertEqual(len(response.context['page_obj']), settings.POSTS_PER_PAGE)
+            self.assertEqual(len(response.context['page_obj']
+                                 ), settings.POSTS_PER_PAGE)
 
     def test_third_page_contains_six_posts(self):
         """Проверка: количество постов на 3 странице равно 6
