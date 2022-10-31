@@ -16,7 +16,7 @@
         {% if request.user.is_authenticated %}
         <li class="nav-item">
           {% if post.group %}  
-            <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a>
+            <a href="{% url 'posts:group_posts' post.group.slug %}">все записи группы</a>
           {% endif %} 
         </li>
         <li class="nav-item"> 

@@ -1,11 +1,9 @@
-from tokenize import group
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 
 from posts.models import Group, Post
 from posts.forms import PostForm
-import posts.views
 
 
 User = get_user_model()
@@ -17,7 +15,7 @@ class PostFormsTests(TestCase):
         """ Создаем тестовую группу и тестовый экземпляр поста."""
         super().setUpClass()
         cls.user = User.objects.create_user(username='test_test')
-        cls.user2= User.objects.create_user(username='test_test2')
+        cls.post_author = User.objects.create_user(username='test_test2')
         cls.group = Group.objects.create(
             title='Тестовая заголовок',
             slug='test-slug',
@@ -26,7 +24,7 @@ class PostFormsTests(TestCase):
         cls.post = Post.objects.create(
             text='Тестовый текст',
             pub_date='Тестовая дата',
-            author=cls.user2,
+            author=cls.post_author,
             group=cls.group,
         )
         cls.form = PostForm()
@@ -36,7 +34,7 @@ class PostFormsTests(TestCase):
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
         self.author = Client()
-        self.author.force_login(self.user2)
+        self.author.force_login(self.post_author)
 
     def test_authorized_client_post_create(self):
         """Авторизированный клиент может создавать посты."""
@@ -57,8 +55,8 @@ class PostFormsTests(TestCase):
             'posts:profile',
             kwargs={'username': self.user.username}))
         self.assertTrue(
-            Post.objects.filter(text='Данные из формы', author=self.user, group = self.group).exists()
-        )
+            Post.objects.filter(text='Данные из формы', author=self.user,
+                                group=self.group).exists())
 
     def test_guest_client_can_not_post_create(self):
         """Неавторизованный клиент не может создавать посты."""
@@ -79,7 +77,7 @@ class PostFormsTests(TestCase):
         self.assertEqual(Post.objects.count(), posts_count)
 
     def test_author_post_edit(self):
-        """Автор может редактировать посты не автор будет перенаправлен."""
+        """Автор может редактировать посты."""
         post_count = Post.objects.count()
         form_data = {
             'text': 'Измененный текст',
@@ -89,18 +87,19 @@ class PostFormsTests(TestCase):
         response = self.author.post(
             reverse('posts:post_edit', kwargs={'post_id': self.post.pk}),
             data=form_data,
-            #ollow=True
+            follow=True
         )
 
         self.assertEqual(Post.objects.count(), post_count)
-        # self.assertRedirects(response, reverse(
-        #     'posts:post_detail', kwargs={'post_id': self.post.pk}))
+        self.assertRedirects(response, reverse(
+            'posts:post_detail', kwargs={'post_id': self.post.id}))
         self.assertTrue(
-            Post.objects.filter(text='Измененный текст', author = self.user2, group = self.group).exists()
-        )
+            Post.objects.filter(text='Измененный текст',
+                                author=self.post_author,
+                                group=self.group).exists())
 
     def test_authorized_post_edit(self):
-        """ не автор будет перенаправлен."""
+        """Не автор не может редактировать и будет перенаправлен."""
         post_count = Post.objects.count()
         form_data = {
             'text': 'Измененный текст2',
@@ -110,12 +109,13 @@ class PostFormsTests(TestCase):
         response = self.authorized_client.post(
             reverse('posts:post_edit', kwargs={'post_id': self.post.id}),
             data=form_data,
-            #follow=True
+            follow=True
         )
 
         self.assertEqual(Post.objects.count(), post_count)
         self.assertRedirects(response, reverse(
             'posts:post_detail', kwargs={'post_id': self.post.id}))
         self.assertFalse(
-            Post.objects.filter(text='Измененный текст2', author = self.user2, group = self.group).exists()
-        )
+            Post.objects.filter(text='Измененный текст2',
+                                author=self.user,
+                                group=self.group).exists())
