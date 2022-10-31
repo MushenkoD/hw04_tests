@@ -174,7 +174,7 @@ class PostPagesTests(TestCase):
         self.assertEqual(post_id, postid)
 
     def test_post_in_this_group(self):
-        """Проверка: пост попал в группу группу."""
+        """Проверка: пост попал в нужную группу."""
         group = self.group
         post = self.post
         rev = reverse(self.group_posts_v, kwargs={'slug': self.group.slug})
