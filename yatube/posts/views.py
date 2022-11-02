@@ -58,11 +58,9 @@ def index(request):
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    posts = group.posts.all()
     page_obj = post_paginator(group.posts.all(), request)
     context = {
         'group': group,
-        'posts': posts,
         'page_obj': page_obj,
     }
     return render(request, 'posts/group_list.html', context)

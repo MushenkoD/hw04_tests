@@ -49,24 +49,23 @@ class PostPagesTests(TestCase):
         self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.post_author)
-        self.templates_page_names = {
-            reverse('posts:group_posts', kwargs={'slug': self.group.slug}): (
-                'posts/group_list.html'
-            ),
-            reverse('posts:index'): 'posts/index.html',
-            reverse('posts:profile', kwargs={'username': (
-                self.post_author.username)}): 'posts/profile.html',
-            reverse('posts:post_create'): 'posts/create_post.html',
-            reverse('posts:post_edit', kwargs={'post_id': (
-                self.post.pk)}): 'posts/create_post.html',
-        }
-
         self.index_v = 'posts:index'
         self.profile_v = 'posts:profile'
         self.post_detail_v = 'posts:post_detail'
         self.create_v = 'posts:post_create'
         self.edit_v = 'posts:post_edit'
         self.group_posts_v = 'posts:group_posts'
+        self.templates_page_names = {
+            reverse(self.group_posts_v, kwargs={'slug': self.group.slug}): (
+                'posts/group_list.html'
+            ),
+            reverse(self.index_v): 'posts/index.html',
+            reverse(self.profile_v, kwargs={'username': (
+                self.post_author.username)}): 'posts/profile.html',
+            reverse(self.create_v): 'posts/create_post.html',
+            reverse(self.edit_v, kwargs={'post_id': (
+                self.post.pk)}): 'posts/create_post.html',
+        }
 
     def test_pages_use_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
@@ -97,14 +96,11 @@ class PostPagesTests(TestCase):
         """Шаблон group_posts сформированы с верным контекстом."""
         post_group = self.group
         page_obj = page_obj_func(post_group.posts.all(), 1)
-        posts_group = post_group.posts.all()
 
         rev = reverse(self.group_posts_v, kwargs={'slug': self.group.slug})
         response = self.guest_client.get(rev)
-        posts = response.context['posts']
         group = response.context['group']
 
-        self.assertEqual(str(posts_group), str(posts))
         self.assertEqual(group, post_group)
         self.assertEqual(len(response.context['page_obj']), len(page_obj))
 
