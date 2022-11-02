@@ -67,7 +67,7 @@ class PostURLTest(TestCase):
 
         for address, template in open_urls.items():
             with self.subTest(address=address):
-                response = self.author_client.get(address)
+                response = self.guest_client.get(address)
                 self.assertTemplateUsed(response, template)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 

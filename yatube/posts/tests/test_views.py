@@ -184,8 +184,8 @@ class PostPagesTests(TestCase):
     def test_post_not_in_another_group(self):
         """Проверка: пост не попал в другую группу."""
         post = self.post
-        v = reverse(self.group_posts_v, kwargs={'slug': self.group_other.slug})
-        response = self.authorized_client.get(v)
+        rev = reverse(self.group_posts_v, kwargs={'slug': self.group_other.slug})
+        response = self.authorized_client.get(rev)
         self.assertNotContains(response, post)
 
     def test_post_not_in_another_profile(self):
